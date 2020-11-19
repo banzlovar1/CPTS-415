@@ -40,8 +40,12 @@ def filterPaths(paths, src, dest):
     paths.sort(key = lambda x: x[-1])
     print(paths)
 
-def getAllAirportsInCountry(countries, ct):
-    return countries.loc[countries['Country'] == ct] 
+def getAllAirportsInCountry(airports, ct):
+    return airports.loc[airports['Country'] == ct]
+
+
+def topKCountries(airports, k):
+    return airports['Country'].value_counts()[:k]
 
 g = nx.Graph()
 # Generate graph of nodes using networkX
@@ -51,23 +55,44 @@ for index, row in df.iterrows():
 #graph = nx.from_pandas_edgelist(df, source='Source_Airport', target='Dest_Airport')
 
 # Running
-# while(True):
-#     src = input('Source Aiport: ')
-#     if src == 'close':
-#         break
-#     dest = input('Destination Aiport: ')
-#     if dest == 'close':
-#         break
-#     lay = input('Max number of layovers: ')
-#     lay = int(lay)+1
-#     #depart = input('Departure Date: ')
-#     #ret = input('Return Date: ')
-#     paths = nx.all_simple_paths(g, source = src.upper(), target = dest.upper(), cutoff=int(lay))
+while(True):
+    test = input('What would you like to find out:\n1)Destination Information \n2)Trip Routes\n')
+    # Destination Information Choices
+    if test == '1':
+        print('Destination Information')
+        infochoice = input('What would you like to do:\n1)Country Airport Information \n2)Country with the most Airports\n3)Top K Countries with Airports\n')
+        if infochoice == '1':
+            country = input('Country: ')
+            countryAirports = getAllAirportsInCountry(af, country)
+            with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+                print(countryAirports['Name'])
+        if infochoice == '2':
+            print('Country with the most airports:\n', topKCountries(af, 1))
+        if infochoice == '3':
+            k = input('How many countries would you like to see: ')
+            print('Top countries:\n', topKCountries(af, int(k)))
+    
+    #Route Information
+    if test == '2':
+        travelchoice = input("What would you like to do:\n1)Route from Point A to B\n2)Reachability of Airport")
+        if travelchoice == '1':
+            src = input('Source Aiport: ')
+            if src == 'close':
+                break
+            dest = input('Destination Aiport: ')
+            if dest == 'close':
+                break
+            lay = input('Max number of layovers: ')
+            lay = int(lay)+1
+            #depart = input('Departure Date: ')
+            #ret = input('Return Date: ')
+            paths = nx.all_simple_paths(g, source = src.upper(), target = dest.upper(), cutoff=int(lay))
+            for path in paths:
+                print(path)
+        if travelchoice == '2':
+            print('woot')
+    
+    print('\n')
 
-#     #paths2 = nx.all_shortest_paths(g, source= src.upper(), target = dest.upper())
-#     #filterPaths(list(paths), src.upper(), dest.upper())
-#     for path in paths:
-#         print(path)
-
-a = getAllAirportsInCountry(af, "United Kingdom")
-print(a)
+#a = getAllAirportsInCountry(af, "United Kingdom")
+#print(a)
