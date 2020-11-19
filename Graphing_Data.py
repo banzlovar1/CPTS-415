@@ -47,6 +47,14 @@ def getAllAirportsInCountry(airports, ct):
 def topKCountries(airports, k):
     return airports['Country'].value_counts()[:k]
 
+def boundedReachability(paths):
+    reach = []
+    for path in paths:
+            if path not in reach:
+                reach.append(path)
+    reach.sort()
+    return reach
+
 g = nx.Graph()
 # Generate graph of nodes using networkX
 for index, row in df.iterrows():
@@ -74,7 +82,7 @@ while(True):
     
     #Route Information
     if test == '2':
-        travelchoice = input("What would you like to do:\n1)Route from Point A to B\n2)Reachability of Airport")
+        travelchoice = input("What would you like to do:\n1)Route from Point A to B\n2)Reachability of Airport\n")
         if travelchoice == '1':
             src = input('Source Aiport: ')
             if src == 'close':
@@ -90,8 +98,11 @@ while(True):
             for path in paths:
                 print(path)
         if travelchoice == '2':
-            print('woot')
-    
+            src = input('Source Aiport: ')
+            cut = input('Max number of hops: ')
+            cut = int(cut)+1
+            paths = nx.single_source_shortest_path(g, source = src.upper(), cutoff = int(cut))
+            print(boundedReachability(list(paths.keys())))
     print('\n')
 
 #a = getAllAirportsInCountry(af, "United Kingdom")
